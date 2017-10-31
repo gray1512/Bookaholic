@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="60dp"
+    android:background="@color/colorPrimary">
+
+    <TextView
+        android:id="@+id/actionbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/actionbar_back"
+        android:fontFamily="sans-serif"
+        android:text="Choose a picture"
+        android:textAllCaps="false"
+        android:textColor="@color/colorHighlight"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/actionbar_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent"
+        android:visibility="visible"
+        app:srcCompat="@drawable/back" />
+
+    <ImageButton
+        android:id="@+id/actionbar_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="4dp"
+        android:background="@android:color/transparent"
+        android:visibility="gone"
+        app:srcCompat="@drawable/done" />
+</RelativeLayout>

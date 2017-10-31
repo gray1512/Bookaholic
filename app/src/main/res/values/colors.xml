@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#455a64</color>
+    <color name="colorPrimaryDark">#1c313a</color>
+    <color name="colorAccent">#718792</color>
+
+    <color name="colorHighlight">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorShadow">#7dffffff</color>
+    <color name="colorFABShadow">#ECF3F4</color>
+
+    <color name="backgroundChoosePicture">#8c505050</color>
+    <color name="backgroundOCRText">#e7313131</color>
+    <color name="mainBackground">#1c313a</color>
+
+    <color name="black_overlay">#94000000</color>
+</resources>
+
+

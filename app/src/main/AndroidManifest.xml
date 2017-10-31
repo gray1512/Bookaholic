@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="theboltentertainment.bookaholic">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/launcher_icon"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/launcher_icon"
+        android:supportsRtl="true"
+        android:theme="@style/AppThemeWithoutAnim">
+        <activity
+            android:name=".LauncherActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:noHistory="true"
+            android:theme="@style/FullScreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/app_name"
+            android:theme="@style/AppThemeWithoutAnim" />
+        <activity
+            android:name=".DisplayOCRActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/FullScreenTheme" />
+        <activity
+            android:name=".GaleryActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/AppThemeWithoutAnim" />
+        <activity
+            android:name=".EditActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/AppThemeWithoutAnim" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.bookaholic.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".BookDetailActivity"
+            android:label="@string/title_activity_book_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CustomImageActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_custom_image"
+            android:theme="@style/FullscreenTheme"></activity>
+    </application>
+
+</manifest>
