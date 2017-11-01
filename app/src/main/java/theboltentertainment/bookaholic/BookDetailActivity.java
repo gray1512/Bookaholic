@@ -1,5 +1,6 @@
 package theboltentertainment.bookaholic;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
@@ -18,10 +21,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.PopupWindow;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,6 +57,11 @@ public class BookDetailActivity extends AppCompatActivity {
     private ArrayList<QuoteClass> bookQuotesList = new ArrayList<>();
     private String imagePath;
 
+    private AppBarLayout appBarLayout;
+    private CollapsingToolbarLayout toolbarLayout;
+    private MenuItem edit;
+    private MenuItem delete;
+
     private FloatingActionButton fab;
     private FloatingActionButton takepicFab;
     private FloatingActionButton galeryFab;
@@ -64,6 +76,9 @@ public class BookDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        appBarLayout = findViewById(R.id.app_bar);
+        toolbarLayout = findViewById(R.id.toolbar_layout);
+
         db = new SQLDatabase(getBaseContext());
 
         book = (BookClass) getIntent().getSerializableExtra(BOOK);
@@ -73,7 +88,7 @@ public class BookDetailActivity extends AppCompatActivity {
         String cover = book.get_cover();
         if (new File(cover).exists()) {
             Drawable coverDrawable = new BitmapDrawable(getResources(), cover);
-            findViewById(R.id.toolbar_layout).setBackground(coverDrawable);
+            toolbarLayout.setBackground(coverDrawable);
         }
 
         fab = (FloatingActionButton) findViewById(R.id.book_scan_btn);
@@ -120,6 +135,21 @@ public class BookDetailActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_book_detail, menu);
+        edit = menu.findItem(R.id.action_edit);
+        delete = menu.findItem(R.id.action_del);
+
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (appBarLayout.getTotalScrollRange() + verticalOffset == 0) {
+                    edit.setVisible(true);
+                    delete.setVisible(true);
+                } else {
+                    edit.setVisible(false);
+                    delete.setVisible(false);
+                }
+            }
+        });
         return true;
     }
 
@@ -127,18 +157,14 @@ public class BookDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_del: {
-                SQLDatabase db = new SQLDatabase(getBaseContext());
-
-                for (QuoteClass quote : bookQuotesList) {
-                    db.deleteQuote(quote);
-                }
-                db.close();
-                startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.ACTIVITY, BOOK_DETAIL_ACTIVITY));
+                areYouSure();
                 return true;
             }
 
             case R.id.action_edit: {
-
+                Intent intent = new Intent(getBaseContext(), EditBookActivity.class);
+                intent.putExtra(BOOK, book);
+                startActivity(intent);
             }
         }
         return false;
@@ -175,6 +201,44 @@ public class BookDetailActivity extends AppCompatActivity {
             db.insertData(newQuote.get_dataList());
 
             recyclerView.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    private void areYouSure() {
+        try {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View layout = inflater.inflate(R.layout.popup, null);
+
+            final PopupWindow pw = new PopupWindow(layout, 400, 300, true);
+            pw.setOutsideTouchable(true);
+            pw.setFocusable(true);
+            pw.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_frame));
+            pw.showAtLocation((View) recyclerView.getParent(), Gravity.CENTER, 0, 0);
+
+            Button yesBtn = layout.findViewById(R.id.yes_btn);
+            Button noBtn = layout.findViewById(R.id.no_btn);
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SQLDatabase db = new SQLDatabase(getBaseContext());
+
+                    for (QuoteClass quote : bookQuotesList) {
+                        db.deleteQuote(quote);
+                    }
+                    db.close();
+                    startActivity(new Intent(getBaseContext(), MainActivity.class).putExtra(MainActivity.ACTIVITY, BOOK_DETAIL_ACTIVITY));
+                    pw.dismiss();
+                }
+            });
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pw.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

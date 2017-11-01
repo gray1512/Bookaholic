@@ -83,7 +83,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:backgroundTint="@android:color/transparent"
-        android:inputType="textMultiLine"
         android:text="Book Title"
         android:textColor="@color/colorBlack"
         android:textSize="14sp"

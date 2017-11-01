@@ -99,6 +99,45 @@ class SQLDatabase extends SQLiteOpenHelper {
         Log.e("SQLDatabase Update", "Success");
     }
 
+    void updateBookData(BookClass oldBook, BookClass newBook) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ContentValues contentValues = new ContentValues();
+        Cursor res =  db.rawQuery( "SELECT * FROM " + BOOK_TABLE_NAME, null );
+
+        int id = -1;
+        String quote, time, title, content, cover, author, type, year;
+        res.moveToFirst();
+        while(!res.isAfterLast()){
+            if (oldBook.get_title().equals(res.getString(res.getColumnIndex(BOOK_COLUMN_TITLE))) &&
+                    oldBook.get_content().equals(res.getString(res.getColumnIndex(BOOK_COLUMN_CONTENT))) &&
+                    oldBook.get_cover().equals(res.getString(res.getColumnIndex(BOOK_COLUMN_COVER))) &&
+                    oldBook.get_author().equals(res.getString(res.getColumnIndex(BOOK_COLUMN_AUTHOR))) &&
+                    oldBook.get_type().equals(res.getString(res.getColumnIndex(BOOK_COLUMN_TYPE))) &&
+                    oldBook.get_year().equals(res.getString(res.getColumnIndex(BOOK_COLUMN_YEAR)))) {
+                id = res.getInt(res.getColumnIndex(BOOK_COLUMN_ID));
+                quote   = res.getString(res.getColumnIndex(BOOK_COLUMN_QUOTE));
+                time    = res.getString(res.getColumnIndex(BOOK_COLUMN_TIME));
+                title   = newBook.get_title();
+                content = newBook.get_content();
+                cover   = newBook.get_cover();
+                author  = newBook.get_author();
+                type    = newBook.get_type();
+                year    = newBook.get_year();
+
+                String[] dataList = new String[]{quote, time, title, content, cover, author, type, year};
+                for (int i = 0; i < dataList.length; i++) {
+                    contentValues.put(DATALIST[i], dataList[i]);
+                }
+
+                db = this.getWritableDatabase();
+                db.update(BOOK_TABLE_NAME, contentValues, "id = ?", new String[] { String.valueOf(id) } );
+            }
+            res.moveToNext();
+        }
+        res.close();
+        Log.e("SQLDatabase Update", "Success");
+    }
+
     void deleteQuote(QuoteClass delQuote) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res =  db.rawQuery( "SELECT * FROM " + BOOK_TABLE_NAME, null );

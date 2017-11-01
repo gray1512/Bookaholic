@@ -113,6 +113,12 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         parentView = (View) recyclerView.getParent();
+
+        if (_activity == MAIN_ACTIVITY_RECENTLY && quoteList.size() != 0) {
+            parentView.findViewById(R.id.scan_start_tip).setVisibility(View.GONE);
+        } else if (_activity == MAIN_ACTIVITY_BOOKSHELF && bookList.size() != 0){
+            parentView.findViewById(R.id.bookshelf_start_tip).setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -362,12 +368,16 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
                 @Override
                 public void onClick(View v) {
                     quoteList.remove(quote);
-
                     SQLDatabase db = new SQLDatabase(ctx);
                     db.deleteQuote(quote);
                     db.close();
 
-                    notifyDataSetChanged();
+                    if (_activity == BOOK_DETAIL_ACTIVITY && quoteList.size() == 0) {
+                        ctx.startActivity(new Intent(ctx, MainActivity.class).putExtra(MainActivity.ACTIVITY, BookDetailActivity.BOOK_DETAIL_ACTIVITY)
+                                                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    } else {
+                        notifyDataSetChanged();
+                    }
                     pw.dismiss();
                 }
             });

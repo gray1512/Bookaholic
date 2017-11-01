@@ -59,8 +59,8 @@ public class EditActivity extends AppCompatActivity {
     private TextView displayTitle;
 
     private String bookCover = QuoteClass.DEFAULT_COVER;
-    private final int REQUEST_COVER_PICTURE = 115;
-    private final int REQUEST_CUSTOM_PICTURE = 116;
+    public static final int REQUEST_COVER_PICTURE = 115;
+    public static final int REQUEST_CUSTOM_PICTURE = 116;
 
     public static final String BOOK_COVER = "New book cover from galery activity";
 
@@ -194,6 +194,7 @@ public class EditActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_COVER_PICTURE && resultCode == RESULT_OK) {
             String path = (new File(bookCover).exists()) ? bookCover : data.getStringExtra(EditActivity.BOOK_COVER);
+            bookCover = QuoteClass.DEFAULT_COVER;
             Intent intent = new Intent(getBaseContext(), CustomImageActivity.class);
             intent.putExtra(CustomImageActivity.IMAGE_PATH, path);
             startActivityForResult(intent, REQUEST_CUSTOM_PICTURE);

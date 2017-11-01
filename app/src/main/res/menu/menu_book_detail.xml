@@ -6,11 +6,13 @@
         android:id="@+id/action_edit"
         android:title="Edit"
         app:showAsAction="always"
-        android:icon="@drawable/edit_btn"/>
+        android:visible="false"
+        android:icon="@drawable/edit_book"/>
 
     <item
         android:id="@+id/action_del"
         android:title="Delete"
         app:showAsAction="always"
-        android:icon="@drawable/delete" />
+        android:visible="false"
+        android:icon="@drawable/delete_book" />
 </menu>
