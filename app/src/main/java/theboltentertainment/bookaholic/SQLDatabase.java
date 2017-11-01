@@ -99,6 +99,28 @@ class SQLDatabase extends SQLiteOpenHelper {
         Log.e("SQLDatabase Update", "Success");
     }
 
+    void deleteQuote(QuoteClass delQuote) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res =  db.rawQuery( "SELECT * FROM " + BOOK_TABLE_NAME, null );
+
+        res.moveToFirst();
+        int id = -1;
+        String time;
+
+        while(!res.isAfterLast()){
+            time = res.getString(res.getColumnIndex(BOOK_COLUMN_TIME));
+
+            if (delQuote.get_time().equals(time)) {
+                id = res.getInt(res.getColumnIndex(BOOK_COLUMN_ID));
+                Log.e("Delete", ":" + id);
+                break;
+            }
+            res.moveToNext();
+        }
+        res.close();
+        db.delete(BOOK_TABLE_NAME, "id = ? ", new String[] { Integer.toString(id)});
+    }
+
     ArrayList<QuoteClass> getAllBookData () {
         String quote, time, title, content, cover, author, type, year;
         ArrayList<QuoteClass> quote_list = new ArrayList<>();

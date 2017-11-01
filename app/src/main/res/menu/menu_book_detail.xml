@@ -3,8 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="theboltentertainment.bookaholic.BookDetailActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/action_edit"
+        android:title="Edit"
+        app:showAsAction="always"
+        android:icon="@drawable/edit_btn"/>
+
+    <item
+        android:id="@+id/action_del"
+        android:title="Delete"
+        app:showAsAction="always"
+        android:icon="@drawable/delete" />
 </menu>

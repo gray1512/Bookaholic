@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -163,6 +166,13 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
                     }
                 });
 
+                holder.delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        areYouSure(v, quote);
+                    }
+                });
+
                 holder.edit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -285,6 +295,13 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
                     }
                 });
 
+                holder.delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        areYouSure(v, quote);
+                    }
+                });
+
                 holder.edit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -326,6 +343,44 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
                 return bookQuotesList.size();
         }
         return 0;
+    }
+
+    private void areYouSure(View v, final QuoteClass quote) {
+        try {
+            LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View layout = inflater.inflate(R.layout.popup, null);
+
+            final PopupWindow pw = new PopupWindow(layout, 300, 200, true);
+            pw.setOutsideTouchable(true);
+            pw.setFocusable(true);
+            pw.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.popup_frame));
+            pw.showAsDropDown(v, -250, 8);
+
+            Button yesBtn = layout.findViewById(R.id.yes_btn);
+            Button noBtn = layout.findViewById(R.id.no_btn);
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    quoteList.remove(quote);
+
+                    SQLDatabase db = new SQLDatabase(ctx);
+                    db.deleteQuote(quote);
+                    db.close();
+
+                    notifyDataSetChanged();
+                    pw.dismiss();
+                }
+            });
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pw.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void shareBtnClicked(final View[] views, final ImageView btn, final QuoteClass quote) {
@@ -426,6 +481,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
         TextView author;
         TextView title;
         ImageButton share;
+        ImageButton delete;
         ImageButton edit;
 
         ImageButton facebook;
@@ -458,6 +514,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
                     title = (TextView) itemView.findViewById(R.id.display_title);
 
                     share = (ImageButton) itemView.findViewById(R.id.share_btn);
+                    delete = (ImageButton) itemView.findViewById(R.id.delete_btn);
                     edit = (ImageButton) itemView.findViewById(R.id.edit_btn);
 
                     facebook = (ImageButton) itemView.findViewById(R.id.facebook_btn);
@@ -481,6 +538,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
                     title = (TextView) itemView.findViewById(R.id.display_title);
 
                     share = (ImageButton) itemView.findViewById(R.id.share_btn);
+                    delete = (ImageButton) itemView.findViewById(R.id.delete_btn);
                     edit = (ImageButton) itemView.findViewById(R.id.edit_btn);
 
                     facebook = (ImageButton) itemView.findViewById(R.id.facebook_btn);

@@ -18,6 +18,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.io.File;
@@ -111,6 +114,34 @@ public class BookDetailActivity extends AppCompatActivity {
         adapter = new RecyclerViewAdapter(bookQuotesList, getBaseContext());
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_book_detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_del: {
+                SQLDatabase db = new SQLDatabase(getBaseContext());
+
+                for (QuoteClass quote : bookQuotesList) {
+                    db.deleteQuote(quote);
+                }
+                db.close();
+                startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.ACTIVITY, BOOK_DETAIL_ACTIVITY));
+                return true;
+            }
+
+            case R.id.action_edit: {
+
+            }
+        }
+        return false;
     }
 
     @Override

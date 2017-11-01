@@ -45,5 +45,5 @@
         android:visibility="gone"
         app:layout_constraintRight_toRightOf="@+id/pic"
         app:layout_constraintTop_toTopOf="@+id/pic"
-        app:srcCompat="@drawable/checked" />
+        app:srcCompat="@drawable/img_checked" />
 </android.support.constraint.ConstraintLayout>
