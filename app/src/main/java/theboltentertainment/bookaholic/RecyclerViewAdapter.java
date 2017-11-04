@@ -14,6 +14,8 @@ import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -31,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> implements Filterable {
     private Context ctx;
 
     private int _activity;
@@ -50,6 +52,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
 
     // Main Activity Recently
     private ArrayList<QuoteClass> quoteList = new ArrayList<>();
+    private QuoteFilter filter;
     private String[] packageShareNames = {"com.facebook.katana", "com.instagram.android", "com.twitter.android", "com.tumblr", "OTHER"};
 
     // Main Activity Bookshelf
@@ -109,16 +112,30 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
         bookQuotesList = quote_list;
     }
 
+    ArrayList<QuoteClass> getDataset() {
+        return quoteList;
+    }
+
+    ArrayList<BookClass> getBookDataset() {
+        return bookList;
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (filter == null) {
+            filter = new QuoteFilter();
+        }
+        return filter;
+    }
+
+    void resetFilter() {
+        filter = null;
+    }
+
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         parentView = (View) recyclerView.getParent();
-
-        if (_activity == MAIN_ACTIVITY_RECENTLY && quoteList.size() != 0) {
-            parentView.findViewById(R.id.scan_start_tip).setVisibility(View.GONE);
-        } else if (_activity == MAIN_ACTIVITY_BOOKSHELF && bookList.size() != 0){
-            parentView.findViewById(R.id.bookshelf_start_tip).setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -216,6 +233,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
                             notifyDataSetChanged();
                         }
                     });
+                    holder.img.setImageResource(R.drawable.album);
 
                 } else {
                     handler.post(new Runnable() {
@@ -249,6 +267,8 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
                 if (position < bookList.size()) {
                     final BookClass book = bookList.get(position);
                     String coverPath = book.get_cover();
+                    holder.coverTitle.setVisibility(View.VISIBLE);
+                    holder.cover.setVisibility(View.VISIBLE);
 
                     if (new File(coverPath).exists()) {
                         holder.coverTitle.setVisibility(View.GONE);
@@ -256,6 +276,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
 
                     } else {
                         holder.coverTitle.setText(coverPath);
+                        holder.cover.setImageResource(R.drawable.book_cover);
                     }
                     holder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -274,6 +295,8 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
                     holder.shelf.setImageResource(R.drawable.bookshelf_item_startmdpi);
                 } else if (position % numOfCols == numOfCols - 1) {
                     holder.shelf.setImageResource(R.drawable.bookshelf_item_endmdpi);
+                } else {
+                    holder.shelf.setImageResource(R.drawable.bookshelf_item_middlemdpi);
                 }
 
                 // TODO: start BookDetailActivity
@@ -398,10 +421,18 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
 
         // TODO: animate visible
         for (int i = 0; i < views.length; i++) {
+            AnimationSet set = new AnimationSet(true);
+            Animation trAnimation = new TranslateAnimation(60*(i+1), 0, 0, 0);
+            trAnimation.setDuration(800);
+
+            Animation anim = new AlphaAnimation(0.0f, 1.0f);
+            anim.setDuration(800);
+
+            set.addAnimation(trAnimation);
+            set.addAnimation(anim);
+
+            views[i].startAnimation(set);
             views[i].setVisibility(View.VISIBLE);
-            Animation animation = new TranslateAnimation(60*(i+1), 0 , 0, 0);
-            animation.setDuration(800);
-            views[i].startAnimation(animation);
 
             final int chooseToShare = i;
             if (packageShareNames[chooseToShare].equals("OTHER")) {
@@ -565,6 +596,93 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
         private void clearAnimation()
         {
             itemView.clearAnimation();
+        }
+    }
+
+    private class QuoteFilter extends Filter {
+        private ArrayList<QuoteClass> backupQuoteData = new ArrayList<>();
+        private ArrayList<BookClass> backupBookData = new ArrayList<>();
+
+        private QuoteFilter() {
+            switch (_activity) {
+                case MAIN_ACTIVITY_RECENTLY:
+                    backupQuoteData.addAll(quoteList);
+                    return;
+                case MAIN_ACTIVITY_BOOKSHELF:
+                    backupBookData.addAll(bookList);
+                    return;
+            }
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+
+            switch (_activity) {
+                case MAIN_ACTIVITY_RECENTLY:
+                    if (constraint != null && constraint.length() > 0) {
+                        ArrayList<QuoteClass> filterList = new ArrayList<>();
+                        for (int i = 0; i < backupQuoteData.size(); i++) {
+                            if ((backupQuoteData.get(i).get_quote().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
+                                    (backupQuoteData.get(i).get_title().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
+                                    (backupQuoteData.get(i).get_author().toUpperCase()).contains(constraint.toString().toUpperCase())) {
+                                filterList.add(backupQuoteData.get(i));
+                            }
+
+                        }
+                        results.count = filterList.size();
+                        results.values = filterList;
+                    } else {
+                        results.count = backupQuoteData.size();
+                        results.values = backupQuoteData;
+                    }
+                    return results;
+
+                case MAIN_ACTIVITY_BOOKSHELF:
+                    if (constraint != null && constraint.length() > 0) {
+                        ArrayList<BookClass> filterList = new ArrayList<>();
+                        for (int i = 0; i < backupBookData.size(); i++) {
+                            if ((backupBookData.get(i).get_title().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
+                                    (backupBookData.get(i).get_author().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
+                                    (backupBookData.get(i).get_content().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
+                                    (backupBookData.get(i).get_type().toUpperCase()).contains(constraint.toString().toUpperCase())) {
+                                filterList.add(backupBookData.get(i));
+                            }
+
+                        }
+                        results.count = filterList.size();
+                        results.values = filterList;
+                    } else {
+                        results.count = backupBookData.size();
+                        results.values = backupBookData;
+                    }
+                    return results;
+            }
+            return null;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint,
+                                      FilterResults results) {
+            switch (_activity) {
+                case MAIN_ACTIVITY_RECENTLY:
+                    quoteList.clear();
+                    quoteList.addAll((ArrayList) results.values);
+                    notifyDataSetChanged();
+                    break;
+
+                case MAIN_ACTIVITY_BOOKSHELF:
+                    bookList.clear();
+                    bookList.addAll((ArrayList) results.values);
+
+                    emptyItems = 0;
+                    if (bookList.size() % numOfCols != 0) {
+                        emptyItems = numOfCols - bookList.size() % numOfCols;
+                    }
+                    notifyDataSetChanged();
+                    break;
+            }
+
         }
     }
 }

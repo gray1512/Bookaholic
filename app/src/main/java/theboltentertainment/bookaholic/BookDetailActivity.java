@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -29,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -339,5 +341,15 @@ public class BookDetailActivity extends AppCompatActivity {
                 showBtnAnimation();
             }
         });
+    }
+
+    public void expandQuoteView (View view) {
+        if (((TextView) view).getEllipsize() == null) {
+            ((TextView) view).setEllipsize(TextUtils.TruncateAt.END);
+            ((TextView) view).setMaxLines(5);
+        } else {
+            ((TextView) view).setEllipsize(null);
+            ((TextView) view).setMaxLines(1000000000);
+        }
     }
 }

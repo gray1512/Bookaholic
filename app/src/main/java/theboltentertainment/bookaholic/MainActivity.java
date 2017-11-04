@@ -1,8 +1,10 @@
 package theboltentertainment.bookaholic;
 
 import android.Manifest;
+import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -29,10 +31,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -77,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String OCR_BITMAP = "OCR Bitmap";
     public static final String PATH_FOR_GALERY = "Path to start Galery Activity";
 
+    private MenuItem searchItem;
+
     private ViewPager viewPager;
     private FloatingActionButton mBtn;
     private FloatingActionButton takePic;
@@ -112,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
                             showBtnAnimation();
                         }
                     });
+                    if (searchItem != null) searchItem.setVisible(true);
                     viewPager.setCurrentItem(0);
                     return true;
 
@@ -130,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                             showBtnAnimation();
                         }
                     });
+                    if (searchItem != null) searchItem.setVisible(true);
                     viewPager.setCurrentItem(1);
                     return true;
 
@@ -141,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
                     mBtn.setVisibility(View.GONE);
                     takePic.setVisibility(View.GONE);
                     galery.setVisibility(View.GONE);
+                    if (searchItem != null) searchItem.setVisible(false);
                     viewPager.setCurrentItem(2);
                     return true;
             }
@@ -213,6 +222,39 @@ public class MainActivity extends AppCompatActivity {
         quoteList = getData();
         bookList = getBooks();
         Log.e("Book List", bookList.toString());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                ViewPagerAdapter.getCurrentAdapter(viewPager.getCurrentItem()).getFilter().filter(query);
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_search) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

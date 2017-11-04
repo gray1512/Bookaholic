@@ -41,7 +41,7 @@ public class QuoteClass implements Serializable {
     }
 
     public String get_date() {
-        return _time.substring(0, 9);
+        return _time.substring(0, 10);
     }
 
     public void set_time(String _time) {

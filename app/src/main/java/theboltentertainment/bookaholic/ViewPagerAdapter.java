@@ -54,9 +54,20 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
+    public static RecyclerViewAdapter getCurrentAdapter(int item) {
+        switch (item) {
+            case 0:
+                return (RecyclerViewAdapter) ScanFragment.recyclerView.getAdapter();
+            case 1:
+                return (RecyclerViewAdapter) BookshelfFragment.bookshelfView.getAdapter();
+            default: return null;
+        }
+    }
+
     public static class ScanFragment extends Fragment {
         private static RecyclerView recyclerView;
         private static RecyclerViewAdapter adapter;
+        private static ImageView startTips;
         private static Context c;
 
         @Override
@@ -79,6 +90,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             adapter.setHasStableIds(true);
             recyclerView.setAdapter(adapter);
 
+            startTips = v.findViewById(R.id.scan_start_tip);
+            if (MainActivity.quoteList.size() != 0) {
+                startTips.setVisibility(View.GONE);
+            }
+
             return v;
         }
 
@@ -95,6 +111,10 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             recyclerView.setVisibility(View.VISIBLE);
             adapter = new RecyclerViewAdapter(c, MainActivity.quoteList);
             recyclerView.setAdapter(adapter);
+
+            if (MainActivity.quoteList.size() != 0) {
+                startTips.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -102,6 +122,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         private static Context c;
 
         static RecyclerView bookshelfView;
+        static ImageView startTips;
         static int columns;
         public static final String EMPTY_ITEM = "Empty shelf item";
         static final int numberOfRows = 4;
@@ -127,10 +148,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             bookshelfView = (RecyclerView) v.findViewById(R.id.bookshelf_view);
             GridLayoutManager layoutManager = new GridLayoutManager(c, columns);
             bookshelfView.setLayoutManager(layoutManager);
-            bookshelfView.setHasFixedSize(true);
-            bookshelfView.setItemViewCacheSize(25);
-            bookshelfView.setDrawingCacheEnabled(true);
-            bookshelfView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
             bookshelfView.addItemDecoration(new RecyclerView.ItemDecoration() {
                 @Override
                 public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
@@ -148,6 +165,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             }
             RecyclerViewAdapter adapter = new RecyclerViewAdapter(c, MainActivity.bookList, columns, emptyCells);
             bookshelfView.setAdapter(adapter);
+
+            startTips = v.findViewById(R.id.bookshelf_start_tip);
+            if (MainActivity.bookList.size() != 0) {
+                startTips.setVisibility(View.GONE);
+            }
             return v;
         }
 
@@ -159,6 +181,9 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             int emptyCells = 0;
             if (MainActivity.bookList.size() % columns != 0) {
                 emptyCells = columns - MainActivity.bookList.size() % columns;
+            }
+            if (MainActivity.bookList.size() != 0) {
+                startTips.setVisibility(View.GONE);
             }
             bookshelfView.setAdapter(new RecyclerViewAdapter(c, MainActivity.bookList, columns, emptyCells));
         }

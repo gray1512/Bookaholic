@@ -50,6 +50,19 @@
         app:srcCompat="@drawable/take_pic"
         tools:ignore="RtlHardcoded" />
 
+    <ImageButton
+        android:id="@+id/delete_cover_btn"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:onClick="deleteCover"
+        app:layout_constraintLeft_toRightOf="@+id/galery_cover_btn"
+        app:layout_constraintRight_toLeftOf="@+id/take_pic_cover_btn"
+        app:layout_constraintTop_toBottomOf="@+id/edit_book_cover"
+        app:srcCompat="@drawable/delete_book"
+        tools:ignore="RtlHardcoded" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/galery_cover_btn"
         android:layout_width="wrap_content"
@@ -66,16 +79,16 @@
 
     <EditText
         android:id="@+id/edit_book_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:backgroundTint="@android:color/transparent"
         android:hint="Book Title"
-        android:textColorHint="@color/colorAccent"
         android:inputType="textMultiLine|textCapWords"
         android:textColor="@color/colorHighlight"
+        android:textColorHint="@color/colorAccent"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -84,16 +97,16 @@
 
     <EditText
         android:id="@+id/edit_book_author"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:textColorHint="@color/colorAccent"
         android:backgroundTint="@android:color/transparent"
         android:hint="Book Author"
         android:inputType="textMultiLine|textCapWords"
         android:textColor="@color/colorHighlight"
+        android:textColorHint="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

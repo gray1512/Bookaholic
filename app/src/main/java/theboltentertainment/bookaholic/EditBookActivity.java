@@ -1,5 +1,6 @@
 package theboltentertainment.bookaholic;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -9,12 +10,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -82,7 +87,7 @@ public class EditBookActivity extends AppCompatActivity {
 
             }
         });
-        editTitle.setText((book.get_title().equals("Unknown")) ? "" : book.get_title());
+        editTitle.setText(book.get_title());
         editAuthor.setText((book.get_author().equals("Unknown")) ? "" : book.get_author());
         editContent.setText((book.get_content().equals("Unknown")) ? "" : book.get_content());
         editType.setText((book.get_type().equals("Unknown")) ? "" : book.get_type());
@@ -175,11 +180,47 @@ public class EditBookActivity extends AppCompatActivity {
         startActivityForResult(cameraIntent, REQUEST_COVER_PICTURE);
     }
 
+    public void deleteCover (View v) {
+        try {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View layout = inflater.inflate(R.layout.popup, null);
+
+            final PopupWindow pw = new PopupWindow(layout, 300, 200, true);
+            pw.setOutsideTouchable(true);
+            pw.setFocusable(true);
+            pw.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_frame));
+            pw.showAtLocation(v.getRootView(), Gravity.CENTER, 0, 0);
+
+            Button yesBtn = layout.findViewById(R.id.yes_btn);
+            Button noBtn = layout.findViewById(R.id.no_btn);
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bookCover = QuoteClass.DEFAULT_COVER;
+                    editCover.setImageResource(R.drawable.book_cover);
+                    displayTitle.setVisibility(View.VISIBLE);
+                    pw.dismiss();
+                }
+            });
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pw.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void changeCover (View v) {
         Intent intent = new Intent(this, GaleryActivity.class);
         intent.putExtra(PATH_FOR_GALERY, PICTURE_PATH);
         intent.putExtra(MainActivity.ACTIVITY, EDIT_ACTIVITY);
         startActivityForResult(intent, REQUEST_COVER_PICTURE);
     }
+
+
 
 }
