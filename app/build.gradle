@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 import com.android.build.OutputFile
 
-ext.abiCodes = ['armeabi-v7a':1, mips:2, x86:3, 'armeabi':4]
+ext.abiCodes = ['armeabi-v7a':1, mips:2, x86:3]
 
 android {
     compileSdkVersion 26
@@ -11,7 +11,7 @@ android {
         applicationId "theboltentertainment.bookaholic"
         minSdkVersion 18
         targetSdkVersion 26
-        versionCode 2
+        versionCode 3
         versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -22,13 +22,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+        debug {
+            minifyEnabled false
+        }
     }
 
     splits {
         abi {
             enable true
             reset()
-            include "x86", "armeabi-v7a", "mips", "armeabi"
+            include "x86", "armeabi-v7a", "mips"
             universalApk false
         }
     }
@@ -56,6 +59,10 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
     compile 'com.android.support:support-v4:26.1.0'
     compile 'com.rmtheis:tess-two:8.0.0'
+    compile 'com.google.android.gms:play-services-ads:11.4.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.google.firebase:firebase-ads:11.4.2'
     testCompile 'junit:junit:4.12'
 }
+
+apply plugin: 'com.google.gms.google-services'

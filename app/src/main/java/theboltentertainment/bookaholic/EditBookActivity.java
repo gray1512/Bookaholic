@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +23,9 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -35,6 +39,8 @@ import static theboltentertainment.bookaholic.MainActivity.PATH_FOR_GALERY;
 import static theboltentertainment.bookaholic.MainActivity.PICTURE_PATH;
 
 public class EditBookActivity extends AppCompatActivity {
+    private InterstitialAd mInterstitialAd;
+
     private BookClass book;
     private String bookCover = QuoteClass.DEFAULT_COVER;
     private String newBookCover = QuoteClass.DEFAULT_COVER;
@@ -92,6 +98,10 @@ public class EditBookActivity extends AppCompatActivity {
         editContent.setText((book.get_content().equals("Unknown")) ? "" : book.get_content());
         editType.setText((book.get_type().equals("Unknown")) ? "" : book.get_type());
         editYear.setText((book.get_year().equals("Unknown")) ? "" : book.get_year());
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3980658803361406/9058300517");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
     }
 
     @Override
@@ -111,9 +121,23 @@ public class EditBookActivity extends AppCompatActivity {
                 db.updateBookData(book, updateBook);
                 db.close();
 
-                Intent i = new Intent(this, BookDetailActivity.class);
+                final Intent i = new Intent(this, BookDetailActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 i.putExtra(BookDetailActivity.BOOK, updateBook);
+
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
+                            // Load the next interstitial.
+                            startActivity(i);
+                        }
+                    });
+                    mInterstitialAd.show();
+                } else {
+                    Log.e("TAG", "The interstitial wasn't loaded yet.");
+                    startActivity(i);
+                }
                 startActivity(i);
                 return true;
         }

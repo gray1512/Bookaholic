@@ -3,6 +3,7 @@ package theboltentertainment.bookaholic;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import org.opencv.android.OpenCVLoader;
@@ -55,28 +57,19 @@ public class DisplayOCRActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_ocr);
 
         displayProBar = (ProgressBar) findViewById(R.id.display_progress_bar);
-
-        imgPath = getIntent().getStringExtra(MainActivity.OCR_BITMAP);
-        orgBitmap = BitmapFactory.decodeFile(imgPath);
         ocrPicture = (CustomPictureView) findViewById(R.id.ocr_picture);
-
-        ocrPicture.setImageBitmap(orgBitmap);
-
         ocrImg = (ImageView) findViewById(R.id.ocr_img);
-        checkedBtn = (ImageButton) findViewById(R.id.checked);
 
+        checkedBtn = (ImageButton) findViewById(R.id.checked);
         textChecked = (ImageButton) findViewById(R.id.text_checked);
         textUnchecked = (ImageButton) findViewById(R.id.text_unchecked);
 
         scrollView = (ScrollView) findViewById(R.id.scrollView);
         textView = (TextView) findViewById(R.id.display_ocr_text);
 
-        checkedBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getResult();
-            }
-        });
+        imgPath = getIntent().getStringExtra(MainActivity.OCR_BITMAP);
+        orgBitmap = BitmapFactory.decodeFile(imgPath);
+        ocrPicture.setImageBitmap(orgBitmap);
     }
 
     @Override
@@ -88,7 +81,7 @@ public class DisplayOCRActivity extends AppCompatActivity {
         }
     }
 
-    private void getResult() {
+    public void getResult(View v) {
         checkedBtn.setVisibility(View.INVISIBLE);
         displayProBar.setVisibility(View.VISIBLE);
 

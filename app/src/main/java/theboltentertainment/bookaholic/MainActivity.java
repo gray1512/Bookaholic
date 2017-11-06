@@ -46,6 +46,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.MobileAds;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -162,16 +164,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MobileAds.initialize(this, "ca-app-pub-3980658803361406~9984369373");
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
             // create OCR
             prepareTesseract();
         } else {
             final String[] permissions = new String[]{Manifest.permission.CAMERA,
                                                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                                        Manifest.permission.READ_EXTERNAL_STORAGE};
+                                                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                                                        Manifest.permission.INTERNET,
+                                                        Manifest.permission.ACCESS_NETWORK_STATE};
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(permissions, REQUEST_PERMISSION);
             }
@@ -363,15 +370,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void prepareTesseract() {
-        try {
-            prepareDirectory(DATA_PATH + "tessdata/");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        copyTessDataFiles("tessdata");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    prepareDirectory(DATA_PATH + "tessdata/");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                copyTessDataFiles("tessdata");
+            }
+        }).start();
     }
 
-    private void copyTessDataFiles(String path) {
+    private synchronized void copyTessDataFiles(String path) {
         try {
             String fileList[] = getAssets().list(path);
 
@@ -416,7 +428,12 @@ public class MainActivity extends AppCompatActivity {
         takePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getOCRPicture();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getOCRPicture();
+                    }
+                }).start();
             }
         });
         galery.setOnClickListener(new View.OnClickListener() {
@@ -455,7 +472,7 @@ public class MainActivity extends AppCompatActivity {
         galery.setClickable(false);
     }
 
-    private void getOCRPicture () {
+    private synchronized void getOCRPicture () {
         String fileUniqueName= new SimpleDateFormat("yymmdd_hhss").format(new Date());
         String imageFileName = fileUniqueName + ".jpg";
 
@@ -489,6 +506,7 @@ public class MainActivity extends AppCompatActivity {
         if (((TextView) view).getEllipsize() == null) {
             ((TextView) view).setEllipsize(TextUtils.TruncateAt.END);
             ((TextView) view).setMaxLines(5);
+
         } else {
             ((TextView) view).setEllipsize(null);
             ((TextView) view).setMaxLines(1000000000);

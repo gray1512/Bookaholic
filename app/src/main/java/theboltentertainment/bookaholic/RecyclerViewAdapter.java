@@ -275,7 +275,9 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewH
                         Picasso.with(ctx).load(new File(coverPath)).resize(viewWidth, viewHeight).centerInside().into(holder.cover);
 
                     } else {
-                        holder.coverTitle.setText(coverPath);
+                        if (coverPath.equals(QuoteClass.DEFAULT_COVER)) {
+                            holder.coverTitle.setText("Unknown");
+                        } else holder.coverTitle.setText(coverPath);
                         holder.cover.setImageResource(R.drawable.book_cover);
                     }
                     holder.itemView.setOnClickListener(new View.OnClickListener() {

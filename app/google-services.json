@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "501174022573",
+    "firebase_url": "https://bookaholic-f5f9d.firebaseio.com",
+    "project_id": "bookaholic-f5f9d",
+    "storage_bucket": "bookaholic-f5f9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501174022573:android:ea50832c19a8bca0",
+        "android_client_info": {
+          "package_name": "theboltentertainment.bookaholic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "501174022573-q18anqjej81474osttl2ajo5v1ep9nee.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "theboltentertainment.bookaholic",
+            "certificate_hash": "8ffcbcc1b6056ae0f0f6c1576c18f9679255af0f"
+          }
+        },
+        {
+          "client_id": "501174022573-34lbll4f9ffd0cs42ngmf1too80efi81.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKcxE7TNKauamE-NJP2_CYiCS_soYyr_o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "501174022573-34lbll4f9ffd0cs42ngmf1too80efi81.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

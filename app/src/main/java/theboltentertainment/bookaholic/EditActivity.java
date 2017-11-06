@@ -27,6 +27,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -38,6 +42,8 @@ import static theboltentertainment.bookaholic.MainActivity.PATH_FOR_GALERY;
 import static theboltentertainment.bookaholic.MainActivity.PICTURE_PATH;
 
 public class EditActivity extends AppCompatActivity {
+    private InterstitialAd mInterstitialAd;
+
     private  String activity;
     public static String EDIT_ACTIVITY = "Edit Activity";
 
@@ -145,6 +151,10 @@ public class EditActivity extends AppCompatActivity {
 
             }
         });
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3980658803361406/9058300517");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
     }
 
     @Override
@@ -170,8 +180,23 @@ public class EditActivity extends AppCompatActivity {
                     db.updateData(getUpdateQuote());
                     db.close();
 
-                    Intent i = new Intent(this, MainActivity.class);
-                    startActivity(i);
+                    final Intent i = new Intent(this, MainActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                    if (mInterstitialAd.isLoaded()) {
+                        mInterstitialAd.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdClosed() {
+                                // Load the next interstitial.
+                                startActivity(i);
+                            }
+                        });
+                        mInterstitialAd.show();
+                    } else {
+                        Log.e("TAG", "The interstitial wasn't loaded yet.");
+                        startActivity(i);
+                    }
+
                 }
 
                 if (activity.equals(BookDetailActivity.BOOK_DETAIL_ACTIVITY)) {
@@ -180,10 +205,23 @@ public class EditActivity extends AppCompatActivity {
                     db.updateData(quote);
                     db.close();
 
-                    Intent i = new Intent(this, BookDetailActivity.class);
+                    final Intent i = new Intent(this, BookDetailActivity.class);
                     i.putExtra(BookDetailActivity.BOOK, quote.get_book());
                     i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    startActivity(i);
+
+                    if (mInterstitialAd.isLoaded()) {
+                        mInterstitialAd.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdClosed() {
+                                startActivity(i);
+                            }
+                        });
+                       mInterstitialAd.show();
+                    } else {
+                        Log.e("TAG", "The interstitial wasn't loaded yet.");
+                        startActivity(i);
+                    }
+
                 }
         }
         return true;
